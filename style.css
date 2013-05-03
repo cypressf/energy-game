@@ -1,0 +1,23 @@
+body {
+    font-family:sans-serif;
+}
+button {
+    display: block;
+    -webkit-appearance: none;
+    font-size: 2em;
+    margin: 0.1em auto;
+}
+#wrapper {
+    font-size:4em;
+    float:left;
+    margin-left:50%;
+    height:3em;
+    line-height:1;
+}
+#energy{
+    margin:0;
+    margin-left:-50%;
+    float:left;
+    padding:1em;
+    background:#e3fcfc;
+}

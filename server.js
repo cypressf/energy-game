@@ -1,16 +1,18 @@
-
 var http = require("http");
-var api_key = 'abcdf';  // secret stripe API key
+var config = require("config");
+var api_key = config.stripe_api_key;
 var stripe = require('stripe')(api_key);
 
-http.createServer(function(request, response) {
+function onRequest(request, response) {
   response.writeHead(200, {"Content-Type": "text/plain"});
   response.write("Hello World");
   response.end();
-}).listen(8888);
+}
+
+http.createServer(onRequest).listen(8888);
 
 
-var create_stripe_customer = function() {
+function create_stripe_customer() {
     stripe.customers.create(
        { email: 'foobar@example.org' },
        function(err, customer) {

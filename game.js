@@ -64,9 +64,28 @@ var game = (function(){
         start_counter();
     }
 
+    var purchase = function() {
+        var token = function(res){
+          var $input = $('<input type=hidden name=stripeToken />').val(res.id);
+          $('form').append($input).submit();
+        };
+
+        StripeCheckout.open({
+          key:         'pk_ZxofZArpz2hkEuDrzSSwS65zHmew1',
+          address:     true,
+          amount:      99,
+          name:        '10,000 energy',
+          panelLabel:  'Buy it!',
+          token:       token
+        });
+
+        return false;
+    }
+
     invite_button.addEventListener("click", add_invite_bonus);
     like_button.addEventListener("click", add_like_bonus);
-    purchase_button.addEventListener("click", add_purchase_bonus);
+    purchase_button.addEventListener("click", purchase);
+
 
     start_counter();
 

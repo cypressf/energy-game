@@ -1,5 +1,5 @@
 var http = require("http");
-var config = require("config");
+var config = require("./config");
 var api_key = config.stripe_api_key;
 var stripe = require('stripe')(api_key);
 

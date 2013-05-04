@@ -1,10 +1,11 @@
 {
   "name": "monetization_game",
-  "version": "0.0.1",
+  "version": "0.0.1-3",
   "description": "a parody game",
   "main": "game.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
   },
   "repository": "",
   "author": "",
@@ -12,6 +13,11 @@
   "readmeFilename": "README.md",
   "dependencies": {
     "stripe": "~1.3.0",
-    "express": "~3.2.2"
+    "express": "~3.2.2",
+    "redis": "~0.8.3"
+  },
+  "subdomain": "energy-game",
+  "engines": {
+    "node": "0.8.x"
   }
 }

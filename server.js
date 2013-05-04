@@ -2,15 +2,18 @@ var express = require('express');
 var redis = require('redis');
 var passport = require('passport')
 var FacebookStrategy = require('passport-facebook').Strategy;
-var config = require("./config");
-var stripe = require('stripe')(config.stripe_api_key);
+
+var stripe_secret = process.env['STRIPE_SECRET_DEV'];
+var facebook_secret = process.env['FACEBOOK_SECRET'];
+var facebook_id = process.env['FACEBOOK_ID'];
+
 // var db = redis.createClient(6379, 'nodejitsudb7334094310.redis.irstack.com');
 var app = express();
 app.use(express.logger());
 
 passport.use(new FacebookStrategy({
-    clientID: 529998473723265,
-    clientSecret: config.facebook_api_key,
+    clientID: facebook_id,
+    clientSecret: facebook_secret,
     callbackURL: "http://localhost:8888/auth/facebook/callback"
   },
   function(accessToken, refreshToken, profile, done) {
@@ -60,7 +63,7 @@ app.configure(function(){
 //     res.end(body);
 // });
 
-var port = process.env.PORT || 8888;
+var port = process.env.PORT || 5000;
 app.listen(port);
 console.log('Listening on port ' + port);
 

@@ -6,6 +6,7 @@ var config = require("./config");
 var stripe = require('stripe')(config.stripe_api_key);
 // var db = redis.createClient(6379, 'nodejitsudb7334094310.redis.irstack.com');
 var app = express();
+app.use(express.logger());
 
 passport.use(new FacebookStrategy({
     clientID: 529998473723265,
@@ -59,7 +60,7 @@ app.configure(function(){
 //     res.end(body);
 // });
 
-var port = process.env.PORT || 5000;
+var port = process.env.PORT || 8888;
 app.listen(port);
 console.log('Listening on port ' + port);
 

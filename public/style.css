@@ -2,28 +2,36 @@ body {
     font-family:sans-serif;
     margin:0;
     color:#265284;
+    background:#f5fdff;
 }
 button {
     display: block;
     -webkit-appearance: none;
     font-size: 2em;
     padding:0.5em;
-    margin: 0.5em 0;
     background:#e3fcfc;
-    color:#265284;
-    width:100%;
+    color:#547daa;
+    width:13em;
+    margin:0.5em auto;
     border:none;
-    box-shadow:0px 0px 10px #000;
+    box-shadow:0px 0px 2px #c4dddd;
     line-height:1;
     text-align: left;
+    border-radius:3px;
+}
+
+button:hover {
+    box-shadow:0px 0px 2px #b1c8c8;
+    color:#265284;
+    background: linear-gradient(to top, #e3fcfc 0%,#e3fcfc 47%,#efffff 100%); /* W3C */
 }
 
 button:active {
-    box-shadow:inset 0px 0px 10px  #000;
+    box-shadow:inset 0px 0px 5px  #000;
 }
 
 button.disabled {
-    background:#c8c8c8;
+    background:#dedede;
     color:#aaaaaa;
     box-shadow:none;
 }
@@ -42,16 +50,39 @@ button .details {
     float:right;
 }
 
-#wrapper {
-    font-size:6em;
-    float:left;
-    margin-left:50%;
-    height:3em;
-    line-height:1;
-}
 #energy{
+    font-size:6em;
     margin:0;
-    margin-left:-50%;
-    float:left;
-    padding:1em;
+    text-align:center;
+    padding:1em 0 0 0;
+}
+
+@media screen and (max-width: 27em) {
+    button{
+        border-radius:none;
+        margin-top:0;
+        margin-bottom:0;
+        padding:1.5em 0;
+        width:100%;
+        font-size:1.5em;
+        box-shadow:0px 0px 2px #a0b7b7;
+    }
+}
+
+@media screen and (max-height: 30em) {
+    button{
+        border-radius:none;
+        margin:0 auto;
+        width:100%;
+        font-size:1.5em;
+        padding:1.2em 0;
+    }
+    #energy {
+        font-size:3em;
+    }
+}
+@media screen and (max-height: 25em) {
+    button{
+        padding:0.6em 0;
+    }
 }

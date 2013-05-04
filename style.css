@@ -1,14 +1,49 @@
 body {
     font-family:sans-serif;
+    margin:0;
+    color:#265284;
 }
 button {
     display: block;
     -webkit-appearance: none;
     font-size: 2em;
-    margin: 0.1em auto;
+    padding:0.5em;
+    margin: 0.5em 0;
+    background:#e3fcfc;
+    color:#265284;
+    width:100%;
+    border:none;
+    box-shadow:0px 0px 10px #000;
+    line-height:1;
+    text-align: left;
 }
+
+button:active {
+    box-shadow:inset 0px 0px 10px  #000;
+}
+
+button.disabled {
+    background:#c8c8c8;
+    color:#aaaaaa;
+    box-shadow:none;
+}
+
+button .button-width {
+    width:12em;
+    margin:0 auto;
+
+}
+
+button .details {
+    font-size:0.5em;
+    line-height:2;
+    vertical-align: middle;
+    color:#6b97b0;
+    float:right;
+}
+
 #wrapper {
-    font-size:4em;
+    font-size:6em;
     float:left;
     margin-left:50%;
     height:3em;
@@ -19,5 +54,4 @@ button {
     margin-left:-50%;
     float:left;
     padding:1em;
-    background:#e3fcfc;
 }

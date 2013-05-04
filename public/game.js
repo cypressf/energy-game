@@ -122,6 +122,7 @@ var game = (function(){
     }
 
     var add_invite_bonus = function() {
+        try_posting();
         update_energy(invite_energy_bonus);
     }
 
@@ -183,10 +184,10 @@ var game = (function(){
         return false;
     }
 
-    invite_button.addEventListener("click", add_invite_bonus);
+    // invite_button.addEventListener("click", add_invite_bonus);
     like_button.addEventListener("click", add_like_bonus);
     purchase_button.addEventListener("click", purchase);
-
+    // invite_button.addEventListener("click", try_posting);
 
     start_counter();
 

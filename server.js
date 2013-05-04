@@ -1,5 +1,5 @@
 var express = require('express');
-var redis = require('redis');
+var db = require('redis-url').connect(process.env.REDISTOGO_URL);
 var passport = require('passport')
 var FacebookStrategy = require('passport-facebook').Strategy;
 
@@ -7,7 +7,6 @@ var stripe_secret = process.env['STRIPE_SECRET_DEV'];
 var facebook_secret = process.env['FACEBOOK_SECRET'];
 var facebook_id = process.env['FACEBOOK_ID'];
 
-// var db = redis.createClient(6379, 'nodejitsudb7334094310.redis.irstack.com');
 var app = express();
 app.use(express.logger());
 

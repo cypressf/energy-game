@@ -186,7 +186,6 @@ var game = (function(){
 
         StripeCheckout.open({
           key:         'pk_ZxofZArpz2hkEuDrzSSwS65zHmew1',
-          address:     true,
           amount:      99,
           name:        '10,000 energy',
           panelLabel:  'Buy it!',

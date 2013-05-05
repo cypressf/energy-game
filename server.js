@@ -1,19 +1,46 @@
+// ==============================================
+// Server, framework, socket.io, and database
+// ==============================================
 var express = require('express');
+var app = express();
+var http = require('http');
 var db = require('redis-url').connect(process.env.REDISTOGO_URL);
+var server = http.createServer(app);
+var io = require('socket.io').listen(server);
+var port = process.env.PORT || 5000;
+
+
+// ===============================================
+// Authentication, facebook, and payment library
+// ===============================================
 var passport = require('passport')
 var FacebookStrategy = require('passport-facebook').Strategy;
-
 var stripe_secret = process.env['STRIPE_SECRET_DEV'];
 var facebook_secret = process.env['FACEBOOK_SECRET'];
 var facebook_id = process.env['FACEBOOK_ID'];
 
-var app = express();
-app.use(express.logger());
 
+
+// ===============================================
+// App configuration
+// ===============================================
+
+// for debugging
+app.use(express.logger());
+app.use(express.bodyParser());
+app.use(express.static(__dirname + '/public'));
+
+// heroku doesn't support websockets, so we need to use longpolling : (
+io.configure(function () { 
+  io.set("transports", ["xhr-polling"]); 
+  io.set("polling duration", 10); 
+});
+
+// set up the authentication
 passport.use(new FacebookStrategy({
     clientID: facebook_id,
     clientSecret: facebook_secret,
-    callbackURL: "http://localhost:8888/auth/facebook/callback"
+    callbackURL: "http://localhost:5000/auth/facebook/callback"
   },
   function(accessToken, refreshToken, profile, done) {
     console.log(accessToken);
@@ -39,32 +66,27 @@ app.get('/auth/facebook', passport.authenticate('facebook', { scope: 'publish_ac
 app.get('/auth/facebook/callback', 
   passport.authenticate('facebook', { successRedirect: '/',
                                       failureRedirect: '/' }));
-// db.auth(config.redis_api_key, function(err) {
-//     if (err) {
-//         throw err;
-//     }
-// });
-// db.on("error", function (err) {
-//     console.log("Error " + err);
-// });
 
-// db.on('ready', function () { // without this part, redis connection will fail
-//   // do stuff with your redis
-// });
-app.configure(function(){
-    app.use(express.static(__dirname + '/public'));
+
+
+
+// ===============================================
+// API
+// Modify and view the internal state of
+// the game via http requests from the client
+// ===============================================
+app.post('/api/payments', function(request, response){
+    console.log(request.body);
+})
+
+server.listen(port, function(){
+    console.log('Listening on port ' + port);
 });
 
-// app.get('/', function(req, res){
-//     var body = 'Hello World';
-//     res.setHeader('Content-Type', 'text/plain');
-//     res.setHeader('Content-Length', body.length);
-//     res.end(body);
-// });
+io.sockets.on('connection', function(socket) {
+    io.sockets.emit('message', {"message": "new person is connected"});
+});
 
-var port = process.env.PORT || 5000;
-app.listen(port);
-console.log('Listening on port ' + port);
 
 function create_stripe_customer() {
     stripe.customers.create(

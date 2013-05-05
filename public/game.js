@@ -21,7 +21,7 @@ var game = (function(){
     var invite_energy_bonus = 2000; // energy
     var friend_accepts_energy_bonus = 5000; // energy
     var like_energy_bonus = 500; // energy
-    var purchase_bonus = 10000; // energy
+    var purchase_bonus = 100000; // energy
 
 
     /*===================================================

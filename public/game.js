@@ -1,4 +1,8 @@
-// closure to encapsulate variables
+// CLIENT SIDE CODE
+// Keep track of what buttons players press, and perform the
+// actions related to those buttons.
+// Slowly grow the player's energy reserves
+
 var game = (function(){
 
     /*===================================================
@@ -166,10 +170,18 @@ var game = (function(){
         start_counter();
     }
 
+    function post_payment(obj) {
+        var req = new XMLHttpRequest();
+        req.addEventListener("load", add_purchase_bonus());
+        req.open("POST", "/api/payments", true);
+        req.setRequestHeader('Content-Type', 'application/json');
+        req.send(JSON.stringify(obj));
+    }
+
+    // Submit the Stripe purchase form (it's all made by Stripe, not me)
     var purchase = function() {
         var token = function(res){
-          var $input = $('<input type=hidden name=stripeToken />').val(res.id);
-          $('form').append($input).submit();
+            post_payment(res);
         };
 
         StripeCheckout.open({

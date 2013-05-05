@@ -18,7 +18,7 @@ var FacebookStrategy = require('passport-facebook').Strategy;
 var stripe_secret = process.env['STRIPE_SECRET_DEV'];
 var facebook_secret = process.env['FACEBOOK_SECRET'];
 var facebook_id = process.env['FACEBOOK_ID'];
-
+var stripe = require('stripe')(stripe_secret);
 
 
 // ===============================================
@@ -76,7 +76,21 @@ app.get('/auth/facebook/callback',
 // the game via http requests from the client
 // ===============================================
 app.post('/api/payments', function(request, response){
+    var charge = {};
+    charge.amount = 99; // in cents
+    charge.currency = 'usd';
+    charge.card = request.body.id;
+
     console.log(request.body);
+    stripe.charges.create(charge, function(err, response){
+        if (err) {
+            console.log(err);
+        }
+        else {
+            console.log("charge complete!");
+            console.log(response);
+        }
+    });
 })
 
 server.listen(port, function(){

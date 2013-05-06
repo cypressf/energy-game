@@ -6,7 +6,7 @@ var express =     require('express'),
     path =        require('path'),
     stripe =      require('stripe')(process.env['STRIPE_SECRET_DEV']),
     io =          require('socket.io'),
-    Game =        require('./public/Game');
+    game =        require('./public/game');
 
 var app = express(),
     server = http.createServer(app),
@@ -102,7 +102,7 @@ io.sockets.on('connection', function(socket) {
 });
 
 function load_game(data){
-    var game = Game.Game.extend();
+    var game = game.Game.extend();
     game.energy = data.energy;
     game.energy_grow_rate = data.energy_grow_rate;
     game.bonus = data.bonus;
@@ -110,6 +110,6 @@ function load_game(data){
 }
 
 function new_game(){
-    var game = Game.Game.extend();
+    var game = game.Game.extend();
     return game;
 }

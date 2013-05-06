@@ -1,7 +1,4 @@
-if (typeof exports !== 'undefined') {
-    this["like_button"] = module.exports;
-}
-this["like_button"] = {
+module.exports = {
     /*===================================================
     Keep track of how many times the like button has been
     pressed today, how long it needs to be on cooldown,

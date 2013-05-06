@@ -19,7 +19,7 @@ app.configure(function () {
     // app.use(express.logger());
     app.use(express.bodyParser());
     app.use(express.cookieParser());
-    app.use(express.session({secret: 'secret', store: session_store, cookie: { maxAge: 1000*60*60*14 }}));
+    app.use(express.session({secret: 'secret', store: session_store, cookie: { maxAge: 30*1000*60*60*24 }}));
     app.use(express.static(path.join(__dirname, 'public')));
 });
 

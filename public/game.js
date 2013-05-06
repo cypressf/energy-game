@@ -76,6 +76,10 @@ this["Game"] = {
         return false;
     },
 
+    update_dom: function() {
+        return false;
+    },
+
     extend: function() {
         var game = Object.create(this);
         game.bonus = Object.create(this.bonus);

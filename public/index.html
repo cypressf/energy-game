@@ -12,7 +12,28 @@
 
     <p id="energy">1</p>
 
+    <script src="underscore.js"></script>
+    <script src="backbone.js"></script>
     <script src="https://checkout.stripe.com/v2/checkout.js"></script>
     <script src="game.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        var game = Game.extend();
+        game.update_dom = function() {
+            document.querySelector("#energy").innerHTML = this.energy;
+        }
+        var socket = io.connect();
+        socket.on('update', function (data) {
+            console.log(data);
+            game.energy = data.energy;
+            game.update_dom();
+            socket.emit('confirm', { my: 'data' });
+        });
+
+    // invite_button.addEventListener("click", add_invite_bonus);
+    // game.like_button.addEventListener("click", add_like_bonus);
+    // game.purchase_button.addEventListener("click", purchase);
+    // invite_button.addEventListener("click", try_posting);
+    </script>
 </body>
 </html>

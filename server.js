@@ -100,17 +100,3 @@ server.listen(port, function(){
 io.sockets.on('connection', function(socket) {
     io.sockets.emit('message', {"message": "new person is connected"});
 });
-
-
-function create_stripe_customer() {
-    stripe.customers.create(
-       { email: 'foobar@example.org' },
-       function(err, customer) {
-          if (err) {
-             console.log(err.message);
-             return;
-          }
-          console.log("customer id", customer.id);
-       }
-     );
-}

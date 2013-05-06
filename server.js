@@ -8,7 +8,8 @@ var db = require('redis-url').connect(process.env.REDISTOGO_URL);
 var server = http.createServer(app);
 var io = require('socket.io').listen(server);
 var port = process.env.PORT || 5000;
-
+var RedisStore = require('connect-redis')(express);
+var path = require('path');
 
 // ===============================================
 // Authentication, facebook, and payment library
@@ -24,11 +25,13 @@ var stripe = require('stripe')(stripe_secret);
 // ===============================================
 // App configuration
 // ===============================================
-
-// for debugging
-app.use(express.logger());
-app.use(express.bodyParser());
-app.use(express.static(__dirname + '/public'));
+app.configure(function () {
+    app.use(express.logger());
+    app.use(express.bodyParser());
+    app.use(express.cookieParser('secret thing goes here'));
+    app.use(express.session());
+    app.use(express.static(path.join(__dirname, 'public')));
+});
 
 // heroku doesn't support websockets, so we need to use longpolling : (
 io.configure(function () { 

@@ -43,6 +43,30 @@ var like_button = {
     }
 };
 
+var purchase_button = {
+    dom: document.querySelector("#purchase"),
+    send_payment: function(obj) {
+        socket.emit('purchase', obj);
+    },
+
+    // Submit the Stripe purchase form (it's all made by Stripe, not me)
+    purchase: function() {
+        console.log(this);
+        that = this;
+        var token = function(res){
+            that.send_payment(res);
+        };
+
+        StripeCheckout.open({
+          key:         'pk_ZxofZArpz2hkEuDrzSSwS65zHmew1',
+          amount:      99,
+          name:        '10,000 energy',
+          panelLabel:  'Buy it!',
+          token:       token
+        });
+    }
+}
+
 socket.on('energy_update', function (data) {
     game.energy = data.energy;
     game.update_dom();
@@ -54,6 +78,6 @@ socket.on('like_update', function (data) {
 });
 
 // invite_button.addEventListener("click", add_invite_bonus);
-like_button.dom.addEventListener("click", like_button.click_like);
-// game.purchase_button.addEventListener("click", purchase);
+like_button.dom.addEventListener("click", function(){like_button.click_like();});
+purchase_button.dom.addEventListener("click", function(){purchase_button.purchase();});
 // invite_button.addEventListener("click", try_posting);

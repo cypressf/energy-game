@@ -92,6 +92,7 @@ io.sockets.on('connection', function(socket) {
             today: this.today
         }
         this.session.like_button = sess_like_button;
+        this.session.save();
     }
     game.like_button.sync();
     game.sync();
@@ -105,12 +106,34 @@ io.sockets.on('connection', function(socket) {
         game.add_energy(game.like_button.press_button());
         game.like_button.sync();
         game.sync();
-    })
+    });
 
     socket.on('disconnect', function(){
         game.stop_energy_growth();
         game.like_button.stop_counter();
+    });
+
+    socket.on('purchase', function(data){
+        console.log('purchase');
+        var charge = {};
+        charge.amount = 99; // in cents
+        charge.currency = 'usd';
+        charge.card = data.id;
+
+        console.log(data);
+        stripe.charges.create(charge, function(err, response){
+            if (err) {
+                console.log(err);
+            }
+            else {
+                console.log("charge complete!");
+                console.log(response);
+                game.add_bonus('purchase');
+                game.sync();
+            }
+        });
     })
+
 });
 
 function load_game(session){

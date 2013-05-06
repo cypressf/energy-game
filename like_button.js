@@ -47,8 +47,8 @@ module.exports = {
         }
         // Otherwise, it's a shorter timeout
         else {
-            timeout = Math.pow(this.today.count, 2) * this.cooldown_constant;
             this.today.count ++;
+            timeout = Math.pow(this.today.count, 2) * this.cooldown_constant;
         }
         this.start_cooldown(timeout);
         this.start_counter();

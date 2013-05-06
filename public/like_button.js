@@ -69,5 +69,12 @@ this["like_button"] = {
     start_cooldown: function() {
         this.cooldown.start_time = Date.now();
         this.cooldown.timeout = Math.pow(this.today.count, 2);
+    },
+
+    extend: function() {
+        var like_button = Object.create(this);
+        like_button.today = Object.create(this.today);
+        like_button.cooldown = Object.create(this.cooldown);
+        return like_button;
     }
 }

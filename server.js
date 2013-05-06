@@ -69,41 +69,63 @@ io.sockets.on('connection', function(socket) {
     console.log(session);
     var game;
     if (session.data) {
-        game = load_game(session.data);
+        game = load_game(session);
     }
     else {
         game = new_game();
     }
     game.session = session;
+    game.like_button.session = session;
     game.socket = socket;
+    game.like_button.socket = socket;
     game.sync = function() {
-        var data = {
-            energy: this.energy,
-            energy_grow_rate: this.energy_grow_rate,
-            bonus: this.bonus
-        }
+        var data = { energy: this.energy };
         this.socket.emit('energy_update', data);
         this.session.data = data;
         this.session.save();
     }
+    game.like_button.sync = function() {
+        var data = {remaining_time: this.remaining_time()};
+        this.socket.emit('like_update', data);
+        var sess_like_button = {
+            cooldown: this.cooldown,
+            today: this.today
+        }
+        this.session.like_button = sess_like_button;
+    }
+    game.like_button.sync();
     game.sync();
     game.start_energy_growth();
-    socket.emit('like_update', {'remaining_time': 60*1000*60});
+    if (game.like_button.remaining_time()) {
+        game.like_button.start_counter();
+    }
+
+    socket.on('click_like', function(){
+        console.log("click like");
+        game.add_energy(game.like_button.press_button());
+        game.like_button.sync();
+        game.sync();
+    })
 
     socket.on('disconnect', function(){
         game.stop_energy_growth();
+        game.like_button.stop_counter();
     })
 });
 
-function load_game(data){
+function load_game(session){
     var game = Game.extend();
-    game.energy = data.energy;
-    game.energy_grow_rate = data.energy_grow_rate;
-    game.bonus = data.bonus;
+    game.like_button = Like_button.extend();
+    if (session.like_button) {
+        game.like_button.cooldown = session.like_button.cooldown;
+        game.like_button.today = session.like_button.today;
+    }
+    game.energy = session.data.energy;
     return game;
 }
 
 function new_game(){
     var game = Game.extend();
+    game.like_button = Like_button.extend();
     return game;
 }

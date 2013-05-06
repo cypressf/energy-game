@@ -7,18 +7,22 @@ module.exports = {
     // Keep track of how many times the button has been pressed today.
     // Cannot exceed maximum.
     today: {
-        max: 5,
         count: 0,
     },
 
     cooldown: {
         timeout: 0, // milliseconds, how long the button takes before it can be pressed again
         start_time: 0,
+        end_time:0,
         set_interval_id: 0,
-        constant: 50 // the cooldown will increase by constant * this.today.count^2
     },
-
+    max_per_day: 5,
+    cooldown_constant: 0.2*60*1000,
     energy_bonus: 500,
+
+
+    session: null, // stored in redis on the server
+    socket: null,
 
     /*=====================================================
     FUNCTIONS
@@ -29,43 +33,71 @@ module.exports = {
     // on cooldown and keep track of the number of presses. If it is on cooldown,
     // don't do anything.
     press_button: function() {
-        if (this.on_cooldown()) {
+        if (this.remaining_time()) {
             return false;
         }
 
-        // if you've exceeded the limit of clicks per day
-        if (this.today.count >= this.today.max) {
+        var timeout;
 
-            // if you've waited 24 hours since last click, reset the allowed clicks
-            if (Date.now() - this.cooldown.start_time < 24 * 60 * 60 * 1000) {
-                this.today.count = 0;
-            }
-            else {
-                return false;
-            }
+        // If you've exceeded the limit of clicks per day,
+        // set timeout to 24 hrs
+        if (this.today.count >= this.max_per_day) {
+            timeout = 24 * 60 * 60 * 1000;
+            this.today.count = 0;
         }
-        this.today.count ++;
-        this.start_cooldown();
+        // Otherwise, it's a shorter timeout
+        else {
+            timeout = Math.pow(this.today.count, 2) * this.cooldown_constant;
+            this.today.count ++;
+        }
+        this.start_cooldown(timeout);
+        this.start_counter();
         return this.energy_bonus;
     },
 
 
-    // Return true if button is on cooldown. Return false if it is ready
-    // to be pressed again (not on cooldown).
-    on_cooldown: function() {
-        if (Date.now() > this.cooldown.start_time + this.cooldown.timeout) {
-            return false;
-        }
-        else {
-            return true;
-        }
-    },
-
     // Begin the cooldown for the button. Increment the timeout (cooldown takes
     // longer every time) and set the start time.
-    start_cooldown: function() {
+    start_cooldown: function(timeout) {
         this.cooldown.start_time = Date.now();
-        this.cooldown.timeout = Math.pow(this.today.count, 2);
+        this.cooldown.end_time = this.cooldown.start_time + timeout;
+    },
+
+    remaining_time: function() {
+        if (this.cooldown.end_time - Date.now() > 0) {
+            return this.cooldown.end_time - Date.now();
+        }
+        else {return 0;}
+    },
+
+    start_counter: function() {
+        var that = this;
+        this.cooldown.set_interval_id = setInterval(function() {
+
+            if (that.remaining_time()) {
+                that.sync();
+            }
+            else {
+                that.sync();
+                that.stop_counter();
+            }
+        }, 1000);
+    },
+
+    stop_counter: function() {
+        if (this.cooldown.set_interval_id) {
+            clearInterval(this.cooldown.set_interval_id);
+        }
+        this.cooldown.set_interval_id = 0;
+    },
+
+    clear_cooldown: function() {
+        this.cooldown.end_time = 0;
+        this.today.count = 0;
+    },
+
+    sync: function() {
+        return false;
     },
 
     extend: function() {

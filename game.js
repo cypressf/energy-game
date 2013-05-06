@@ -26,6 +26,8 @@ module.exports = {
         purchase: 100000
     },
 
+    like_button: null,
+
     // Add energy according to the bonus type
     add_bonus: function(bonus_type) {
         if (this.bonus[bonus_type]) {

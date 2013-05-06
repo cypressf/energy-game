@@ -15,10 +15,10 @@ this["like_button"] = {
     },
 
     cooldown: {
-        timeout: 0; // milliseconds, how long the button takes before it can be pressed again
-        start_time: 0;
-        set_interval_id: 0;
-        constant: 50; // the cooldown will increase by constant * this.today.count^2
+        timeout: 0, // milliseconds, how long the button takes before it can be pressed again
+        start_time: 0,
+        set_interval_id: 0,
+        constant: 50 // the cooldown will increase by constant * this.today.count^2
     },
 
     energy_bonus: 500,

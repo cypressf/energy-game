@@ -6,7 +6,8 @@ var express =     require('express'),
     path =        require('path'),
     stripe =      require('stripe')(process.env['STRIPE_SECRET_DEV']),
     io =          require('socket.io'),
-    Game =        require('./public/game');
+    Game =        require('./game'),
+    Like_button = require('./like_button');
 
 var app = express(),
     server = http.createServer(app),
@@ -81,28 +82,21 @@ io.sockets.on('connection', function(socket) {
             energy_grow_rate: this.energy_grow_rate,
             bonus: this.bonus
         }
-        this.socket.emit('update', data);
+        this.socket.emit('energy_update', data);
         this.session.data = data;
         this.session.save();
     }
     game.sync();
     game.start_energy_growth();
+    socket.emit('like_update', {'remaining_time': 60*1000*60});
 
-    socket.on('update', function(data){
-        if (data.name) {
-            session.name = data.name;
-            session.save();
-        }
-        console.log(session);
-        socket.emit('update', {"message": "received " + session.name});
-    });
     socket.on('disconnect', function(){
         game.stop_energy_growth();
     })
 });
 
 function load_game(data){
-    var game = Game.Game.extend();
+    var game = Game.extend();
     game.energy = data.energy;
     game.energy_grow_rate = data.energy_grow_rate;
     game.bonus = data.bonus;
@@ -110,6 +104,6 @@ function load_game(data){
 }
 
 function new_game(){
-    var game = Game.Game.extend();
+    var game = Game.extend();
     return game;
 }

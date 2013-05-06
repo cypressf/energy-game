@@ -60,7 +60,7 @@ var purchase_button = {
         StripeCheckout.open({
           key:         'pk_ZxofZArpz2hkEuDrzSSwS65zHmew1',
           amount:      99,
-          name:        '10,000 energy',
+          name:        '100,000 energy',
           panelLabel:  'Buy it!',
           token:       token
         });

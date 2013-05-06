@@ -64,8 +64,8 @@ server.listen(port, function(){
 
 io.sockets.on('connection', function(socket) {
     var session = socket.handshake.session;
-    console.log(socket.handshake.sessionId);
     console.log(session);
+
     if (session.name) {
         socket.emit('update', {"message": "hi " + session.name});
     }

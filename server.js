@@ -7,19 +7,37 @@ var express =     require('express'),
     stripe =      require('stripe')(process.env['STRIPE_SECRET_DEV']),
     io =          require('socket.io'),
     Game =        require('./game'),
-    Like_button = require('./like_button');
+    Like_button = require('./like_button'),
+    passport = require('passport'),
+    FacebookStrategy = require('passport-facebook').Strategy,
+    mongoose = require("mongoose");
 
+require("./models/user");
+var User = mongoose.model('User')
 var app = express(),
     server = http.createServer(app),
     io = io.listen(server),
     session_store = new redis_store({client:db});
     port = process.env.PORT || 5000;
 
+mongoose.connect(process.env['MONGOHQ_URL'], function (err, res) {
+    if (err) { 
+        console.log ('ERROR connecting to: ' + process.env['MONGOHQ_URL'] + '. ' + err);
+    }
+    else {
+        console.log ('Succeeded connected to: ' + process.env['MONGOHQ_URL']);
+    }
+});
+
+
 app.configure(function () {
     // app.use(express.logger());
     app.use(express.bodyParser());
     app.use(express.cookieParser());
     app.use(express.session({secret: 'secret', store: session_store, cookie: { maxAge: 30*1000*60*60*24 }}));
+    app.use(passport.initialize());
+    app.use(passport.session());
+    app.use(app.router);
     app.use(express.static(path.join(__dirname, 'public')));
 });
 
@@ -38,27 +56,61 @@ io.configure(function () {
     io.set('authorization', io_session(express.cookieParser('secret'), session_store)); 
 });
 
+passport.use(new FacebookStrategy({
+    clientID: process.env['FACEBOOK_ID'],
+    clientSecret: process.env['FACEBOOK_SECRET'],
+    callbackURL: "http://localhost:5000/auth/facebook/callback"
+    },
+    function(accessToken, refreshToken, profile, done) {
+        User.findOne({ 'facebook.id': profile.id }, function (err, user) {
+            if (err) { return done(err) }
+            if (!user) {
+                user = new User({
+                    name: profile.displayName,
+                    email: profile.emails[0].value,
+                    username: profile.username,
+                    provider: 'facebook',
+                    facebook: profile._json
+                });
+                user.save(function (err) {
+                    if (err) console.log(err)
+                    return done(err, user)
+                });
+            }
+            else {
+              return done(err, user)
+            }
+        });
+    }
+));
+
+passport.serializeUser(function(user, done) {
+    done(null, user.id);
+});
+
+passport.deserializeUser(function(id, done) {
+    User.findOne({ _id: id }, function (err, user) {
+        done(err, user);
+    });
+});
 
 // ===============================================
 // API
 // ===============================================
-app.post('/api/payments', function(request, response){
-    var charge = {};
-    charge.amount = 99; // in cents
-    charge.currency = 'usd';
-    charge.card = request.body.id;
 
-    console.log(request.body);
-    stripe.charges.create(charge, function(err, response){
-        if (err) {
-            console.log(err);
-        }
-        else {
-            console.log("charge complete!");
-            console.log(response);
-        }
-    });
-})
+
+app.get('/auth/facebook', passport.authenticate('facebook'));
+
+app.get('/auth/facebook/callback', 
+    passport.authenticate('facebook', 
+        { successRedirect: '/', 
+          failureRedirect: '/auth/facebook' }));
+
+app.get('/new_session', function(request, response){
+    request.session.destroy();
+    send.redirect('/');
+});
+
 
 server.listen(port, function(){
     console.log('Listening on port ' + port);

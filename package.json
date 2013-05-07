@@ -21,7 +21,8 @@
     "socket.io": "~0.9.14",
     "connect-redis": "~1.4.5",
     "socket.io-session": "0.0.5",
-    "connect": "~2.7.8"
+    "connect": "~2.7.8",
+    "mongoose": "~3.6.9"
   },
   "subdomain": "energy-game",
   "engines": {

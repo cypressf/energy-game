@@ -42,7 +42,8 @@ app.configure(function () {
 });
 
 io.configure(function () {
-    // heroku doesn't support websockets, so we need to use longpolling
+    // heroku websockets are still in beta, so let's use longpolling
+    // https://blog.heroku.com/archives/2013/10/8/websockets-public-beta
     // https://devcenter.heroku.com/articles/using-socket-io-with-node-js-on-heroku
     io.set("transports", ["xhr-polling"]); 
     io.set("polling duration", 10);
